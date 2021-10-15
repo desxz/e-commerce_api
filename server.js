@@ -5,8 +5,12 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
 //// Application Configurations
+const errorHandler = require("./middleware/error");
 const app = express();
 const connectDB = require("./config/db");
+
+// Define PORT
+const PORT = process.env.PORT || 5000;
 
 // Load env variables
 dotenv.config({ path: "./config/config.env" });
@@ -21,13 +25,18 @@ connectDB();
 
 // Morgan Logger
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+    app.use(morgan("dev"));
 }
 
 // Body Parser
 app.use(bodyParser.json());
 
+// Error Handler
+app.use(errorHandler);
+
 ////Routes
+
+//Define Routes
 const product = require("./routes/product");
 const user = require("./routes/user");
 const order = require("./routes/order");
@@ -39,8 +48,13 @@ app.use(`${api}/users`, user);
 app.use(`${api}/orders`, order);
 app.use(`${api}/categories`, category);
 
-const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`.yellow.bold);
+    console.log(`Server is running on port ${PORT}`.yellow.bold);
+});
+
+//Handle unhandled promise rejections
+process.on("unhandledRejection", (err, promise) => {
+    console.log(`Error: ${err.message}`);
+    //Close server & exit process
+    server.close(() => process.exit(1));
 });
