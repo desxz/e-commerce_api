@@ -6,8 +6,8 @@ const bodyParser = require("body-parser");
 
 //// Application Configurations
 const errorHandler = require("./middleware/error");
-const app = express();
 const connectDB = require("./config/db");
+const app = express();
 
 // Define PORT
 const PORT = process.env.PORT || 5000;
@@ -31,9 +31,6 @@ if (process.env.NODE_ENV === "development") {
 // Body Parser
 app.use(bodyParser.json());
 
-// Error Handler
-app.use(errorHandler);
-
 ////Routes
 
 //Define Routes
@@ -47,6 +44,9 @@ app.use(`${api}/products`, product);
 app.use(`${api}/users`, user);
 app.use(`${api}/orders`, order);
 app.use(`${api}/categories`, category);
+
+// Error Handler
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`.yellow.bold);
