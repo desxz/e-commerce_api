@@ -3,6 +3,7 @@ const colors = require("colors");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const mongoSanitize = require("express-mongo-sanitize");
 
 //// Application Configurations
 const errorHandler = require("./middleware/error");
@@ -47,6 +48,9 @@ app.use(`${api}/categories`, category);
 
 // Error Handler
 app.use(errorHandler);
+
+//Mongo sanitize
+app.use(mongoSanitize());
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`.yellow.bold);

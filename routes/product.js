@@ -1,7 +1,7 @@
 const express = require("express");
 const ErrorResponse = require("../utils/errorResponse");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 const Product = require("../models/product");
 const advancedResults = require("../middleware/advancedResults");
@@ -15,8 +15,15 @@ const {
 
 router
     .route("/")
-    .get(advancedResults(Product), getProducts)
+    .get(
+        advancedResults(Product, {
+            path: "category",
+            select: "name",
+        }),
+        getProducts
+    )
     .post(createProduct);
+
 router.route("/:id").get(getProduct).put(updateProduct).delete(deleteProduct);
 
 module.exports = router;
