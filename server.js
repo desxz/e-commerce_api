@@ -3,6 +3,7 @@ const colors = require("colors");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 
 //// Application Configurations
@@ -22,6 +23,14 @@ const api = process.env.API_URL;
 // Mongoose connection
 connectDB();
 
+// Cookie Parser
+app.use(
+    cookieParser(process.env.COOKIE_SECRET, {
+        httpOnly: true,
+        secure: true,
+    })
+);
+
 ////Middlewares
 
 // Morgan Logger
@@ -39,12 +48,14 @@ const product = require("./routes/product");
 const user = require("./routes/user");
 const order = require("./routes/order");
 const category = require("./routes/category");
+const auth = require("./routes/auth");
 
 // Mounting Routes
 app.use(`${api}/products`, product);
 app.use(`${api}/users`, user);
 app.use(`${api}/orders`, order);
 app.use(`${api}/categories`, category);
+app.use(`${api}/auth`, auth);
 
 // Error Handler
 app.use(errorHandler);

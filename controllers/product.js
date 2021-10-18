@@ -11,6 +11,9 @@ exports.getProducts = asyncHandler(async (req, res, next) => {
     if (req.params.categoryId) {
         const products = await Product.find({
             category: req.params.categoryId,
+        }).populate({
+            path: "category",
+            select: "name",
         });
 
         if (!products || products.length === 0) {
