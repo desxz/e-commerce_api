@@ -27,6 +27,7 @@ const UserSchema = new mongoose.Schema({
         enum: ["seller", "customer"],
         default: "customer",
     },
+
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     createdAt: {
@@ -70,4 +71,4 @@ UserSchema.methods.getResetPasswordToken = function () {
     return resetToken;
 };
 
-module.exports = mongoose.model("user", UserSchema);
+module.exports = mongoose.model("User", UserSchema);

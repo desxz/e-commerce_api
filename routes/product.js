@@ -3,7 +3,7 @@ const ErrorResponse = require("../utils/errorResponse");
 
 const router = express.Router({ mergeParams: true });
 
-const Product = require("../models/product");
+const Product = require("../models/Product");
 const advancedResults = require("../middleware/advancedResults");
 const {
     getProducts,
@@ -12,6 +12,8 @@ const {
     updateProduct,
     deleteProduct,
 } = require("../controllers/product");
+
+const { protect, authorize } = require("../middleware/auth");
 
 router
     .route("/")
@@ -22,8 +24,12 @@ router
         }),
         getProducts
     )
-    .post(createProduct);
+    .post(protect, authorize("seller", "admin"), createProduct);
 
-router.route("/:id").get(getProduct).put(updateProduct).delete(deleteProduct);
+router
+    .route("/:id")
+    .get(getProduct)
+    .put(protect, authorize("seller", "admin"), updateProduct)
+    .delete(protect, authorize("seller", "admin"), deleteProduct);
 
 module.exports = router;

@@ -44,11 +44,12 @@ app.use(bodyParser.json());
 ////Routes
 
 //Define Routes
-const product = require("./routes/product");
-const user = require("./routes/user");
-const order = require("./routes/order");
-const category = require("./routes/category");
-const auth = require("./routes/auth");
+const product = require("./routes/Product");
+const user = require("./routes/User");
+const order = require("./routes/Order");
+const category = require("./routes/Category");
+const auth = require("./routes/Auth");
+const cart = require("./routes/Cart");
 
 // Mounting Routes
 app.use(`${api}/products`, product);
@@ -56,6 +57,7 @@ app.use(`${api}/users`, user);
 app.use(`${api}/orders`, order);
 app.use(`${api}/categories`, category);
 app.use(`${api}/auth`, auth);
+app.use(`${api}/cart`, cart);
 
 // Error Handler
 app.use(errorHandler);

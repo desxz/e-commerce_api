@@ -1,7 +1,7 @@
-const Product = require("../models/product");
+const Product = require("../models/Product");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
-const Category = require("../models/category");
+const Category = require("../models/Category");
 
 //@desc   Get all products
 //@route  GET /api/v1/products
