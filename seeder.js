@@ -9,6 +9,9 @@ dotenv.config({ path: "./config/config.env" });
 //Load models
 const Category = require("./models/Category");
 const Product = require("./models/Product");
+const Cart = require("./models/Cart");
+const User = require("./models/User");
+const Order = require("./models/Order");
 
 //Connect to DB
 mongoose.connect(process.env.MONGO_URI, {
@@ -41,7 +44,10 @@ const deleteData = async () => {
     try {
         await Category.deleteMany();
         await Product.deleteMany();
-        console.log("Data Destroyed...".red.inverse);
+        await Cart.deleteMany();
+        await User.deleteMany();
+        //await Order.deleteMany();
+        console.log("Data Destroyed...".red.inverse.white.bold);
         process.exit();
     } catch (err) {
         console.error(err);

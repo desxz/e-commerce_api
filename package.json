@@ -6,8 +6,8 @@
   "scripts": {
     "start": "SET NODE_ENV=production & node server.js",
     "dev": "nodemon server.js",
-    "seed": "node seeder -i",
-    "clear": "node seeder -d"
+    "seed": "node seeder -i & nodemon server.js",
+    "clear": "node seeder -d & nodemon server.js"
   },
   "repository": {
     "type": "git",
