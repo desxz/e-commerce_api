@@ -1,8 +1,14 @@
 const mongoose = require("mongoose");
+const Product = require("./Product");
 
 const CartItemSchema = new mongoose.Schema({
-    product: {
+    cart: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Cart",
+        required: true,
+    },
+    product: {
+        type: mongoose.Schema.ObjectId,
         ref: "Product",
         required: true,
     },
@@ -16,13 +22,53 @@ const CartItemSchema = new mongoose.Schema({
     },
     total: {
         type: Number,
-        required: true,
+        default: 0,
     },
 });
 
-//Calculate the total price of the cart item
-CartItemSchema.methods.calculateTotal = function () {
-    return this.product.price * this.quantity;
+//Calculate total price of cart item
+CartItemSchema.methods.calculateTotal = async function () {
+    const product = await Product.findById(this.product);
+    this.total = product.price * this.quantity;
+    return this.total;
 };
 
-exports.model = mongoose.model("CartItem", CartItemSchema);
+//Calculate total price of the cart
+CartItemSchema.statics.calculateSubTotal = async function (cartId) {
+    const obj = await this.aggregate([
+        {
+            $match: { cart: cartId },
+        },
+        {
+            $group: {
+                _id: "$cart",
+                total: { $sum: "$total" },
+            },
+        },
+    ]);
+    try {
+        await this.model("Cart").findByIdAndUpdate(cartId, {
+            subtotal: obj[0].total,
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+//Calculate the total price of the cart item
+CartItemSchema.pre("save", async function (next) {
+    await this.calculateTotal();
+    next();
+});
+
+//Calculate the total price of the cart item
+CartItemSchema.pre("update", async function (next) {
+    await this.calculateTotal();
+    next();
+});
+
+CartItemSchema.post("save", function () {
+    this.constructor.calculateSubTotal(this.cart);
+});
+
+module.exports = mongoose.model("CartItem", CartItemSchema);
