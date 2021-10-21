@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const CartItem = require("./CartItem");
 
 const CartSchema = new mongoose.Schema({
     user: {
@@ -7,38 +8,28 @@ const CartSchema = new mongoose.Schema({
         required: true,
         select: false,
     },
-    products: [
+    items: [
         {
-            product: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Product",
-                required: true,
-            },
-            quantity: {
-                type: Number,
-                required: true,
-            },
-            total: {
-                type: Number,
-                required: true,
-                default: 0,
-            },
+            type: mongoose.Schema.ObjectId,
+            ref: "CartItem",
         },
     ],
-
     subtotal: {
         type: Number,
         default: 0,
     },
 });
 
-//Calculate total price of the cart
-CartSchema.methods.calculateTotal = function () {
-    let total = 0;
-    this.products.forEach((product) => {
-        total += product.price * product.quantity;
-    });
-    this.total = total;
-};
+//Calculate the subtotal of the cart
+CartSchema.pre("save", async function (next) {
+    const cart = this;
+    let subtotal = 0;
+    for (let i = 0; i < cart.items.length; i++) {
+        const cartItem = await CartItem.findById(cart.items[i]);
+        subtotal += cartItem.total;
+    }
+    cart.subtotal = subtotal;
+    next();
+});
 
 module.exports = mongoose.model("Cart", CartSchema);
