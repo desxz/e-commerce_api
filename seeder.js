@@ -12,6 +12,7 @@ const Product = require("./models/Product");
 const Cart = require("./models/Cart");
 const User = require("./models/User");
 const Order = require("./models/Order");
+const CartItem = require("./models/CartItem");
 
 //Connect to DB
 mongoose.connect(process.env.MONGO_URI, {
@@ -46,6 +47,7 @@ const deleteData = async () => {
         await Product.deleteMany();
         await Cart.deleteMany();
         await User.deleteMany();
+        await CartItem.deleteMany();
         //await Order.deleteMany();
         console.log("Data Destroyed...".red.inverse.white.bold);
         process.exit();
