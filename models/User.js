@@ -3,38 +3,45 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const UserSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, "Name is required"],
-    },
-    email: {
-        type: String,
-        required: [true, "Email is required"],
-        match: [
-            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-            "Please fill a valid email address",
-        ],
-    },
-    password: {
-        type: String,
-        required: [true, "Password is required"],
-        minlength: [6, "Password must be at least 6 characters long"],
-        select: false,
-    },
-    role: {
-        type: String,
-        enum: ["seller", "customer"],
-        default: "customer",
-    },
+const UserSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: [true, "Name is required"],
+        },
+        email: {
+            type: String,
+            required: [true, "Email is required"],
+            match: [
+                /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                "Please fill a valid email address",
+            ],
+        },
+        password: {
+            type: String,
+            required: [true, "Password is required"],
+            minlength: [6, "Password must be at least 6 characters long"],
+            select: false,
+        },
+        role: {
+            type: String,
+            enum: ["seller", "customer"],
+            default: "customer",
+        },
 
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
-    createdAt: {
-        type: Date,
-        default: Date.now,
+        resetPasswordToken: String,
+        resetPasswordExpire: Date,
+        createdAt: {
+            type: Date,
+            default: Date.now,
+        },
     },
-});
+    {
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+        id: false,
+    }
+);
 
 //Encrypt password using bcrypt
 UserSchema.pre("save", async function (next) {
@@ -70,5 +77,12 @@ UserSchema.methods.getResetPasswordToken = function () {
     this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
     return resetToken;
 };
+
+// UserSchema virtual field with cart
+UserSchema.virtual("cart", {
+    ref: "Cart",
+    localField: "_id",
+    foreignField: "user",
+});
 
 module.exports = mongoose.model("User", UserSchema);
