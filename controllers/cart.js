@@ -46,29 +46,45 @@ exports.addCartItems = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse("Product not found", 404));
     }
 
-    if (cart.items.length >= 0) {
-        const cartItem = cart.items.find(
+    if (product.countInStock < req.body.quantity) {
+        return next(new ErrorResponse("Product is out of stock", 404));
+    }
+
+    if (cart.items.length > 0) {
+        let item = cart.items.find(
             (item) => item.product.toString() === req.body.product
         );
-        if (cartItem) {
-            next(new ErrorResponse("Product already in cart", 400));
-        } else {
-            const cartItem2 = await CartItem.create({
-                cart: cart._id,
-                product: product._id,
-                quantity: req.body.quantity,
-            });
+        console.log(item);
 
-            cart.items.push(cartItem2);
+        if (item) {
+            item.quantity += req.body.quantity;
 
-            await cart.save();
+            // Check product stock
+            if (product.countInStock < item.quantity) {
+                return next(new ErrorResponse("Product is out of stock", 404));
+            }
 
-            res.status(201).json({
+            await item.save();
+            return res.status(200).json({
                 success: true,
                 data: cart,
             });
         }
     }
+
+    const cartItem = await CartItem.create({
+        product: req.body.product,
+        quantity: req.body.quantity,
+        cart: cart._id,
+    });
+
+    cart.items.push(cartItem._id);
+    await cart.save();
+
+    res.status(200).json({
+        success: true,
+        data: cart,
+    });
 });
 
 //@desc   Delete products from cart

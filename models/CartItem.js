@@ -61,12 +61,6 @@ CartItemSchema.pre("save", async function (next) {
     next();
 });
 
-//Calculate the total price of the cart item
-CartItemSchema.pre("update", async function (next) {
-    await this.calculateTotal();
-    next();
-});
-
 CartItemSchema.post("save", function () {
     this.constructor.calculateSubTotal(this.cart);
 });
