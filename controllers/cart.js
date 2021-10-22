@@ -18,10 +18,6 @@ exports.getCartItems = asyncHandler(async (req, res, next) => {
         },
     });
 
-    if (!cart) {
-        cart = await Cart.create({ user: req.user.id });
-    }
-
     res.status(200).json({
         success: true,
         data: cart,
@@ -37,10 +33,6 @@ exports.addCartItems = asyncHandler(async (req, res, next) => {
         ref: "CartItem",
     });
     const product = await Product.findById(req.body.product);
-
-    if (!cart) {
-        cart = await Cart.create({ user: req.user.id });
-    }
 
     if (!product) {
         return next(new ErrorResponse("Product not found", 404));

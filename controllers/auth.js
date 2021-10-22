@@ -55,7 +55,23 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/auth/me
 // @access  Private
 exports.getMe = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).populate({
+        path: "cart",
+        ref: "Cart",
+        populate: {
+            path: "items",
+            ref: "CartItem",
+            populate: {
+                path: "product",
+                ref: "Product",
+                select: "name price",
+            },
+        },
+    });
+
+    if (!user) {
+        return next(new ErrorResponse("No user found", 404));
+    }
 
     res.status(200).json({
         success: true,

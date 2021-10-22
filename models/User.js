@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Cart = require("./Cart");
 
 const UserSchema = new mongoose.Schema(
     {
@@ -28,7 +29,6 @@ const UserSchema = new mongoose.Schema(
             enum: ["seller", "customer"],
             default: "customer",
         },
-
         resetPasswordToken: String,
         resetPasswordExpire: Date,
         createdAt: {
@@ -39,7 +39,6 @@ const UserSchema = new mongoose.Schema(
     {
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
-        id: false,
     }
 );
 
@@ -50,6 +49,15 @@ UserSchema.pre("save", async function (next) {
     }
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+//Crate cart for each user
+UserSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+        next();
+    }
+    const cart = Cart.create({ user: this._id });
     next();
 });
 
