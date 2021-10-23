@@ -57,7 +57,10 @@ UserSchema.pre("save", async function (next) {
     if (!this.isModified("password")) {
         next();
     }
-    const cart = Cart.create({ user: this._id });
+
+    if (!this.cart) {
+        const cart = Cart.create({ user: this._id });
+    }
     next();
 });
 
