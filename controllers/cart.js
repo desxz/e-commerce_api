@@ -57,6 +57,8 @@ exports.addCartItems = asyncHandler(async (req, res, next) => {
             }
 
             await item.save();
+            await cart.save();
+
             return res.status(200).json({
                 success: true,
                 data: cart,
@@ -71,6 +73,7 @@ exports.addCartItems = asyncHandler(async (req, res, next) => {
     });
 
     cart.items.push(cartItem._id);
+    await cartItem.save();
     await cart.save();
 
     res.status(200).json({
