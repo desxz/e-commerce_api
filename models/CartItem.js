@@ -61,8 +61,4 @@ CartItemSchema.pre("save", async function (next) {
     next();
 });
 
-CartItemSchema.post("save", function () {
-    this.constructor.calculateSubTotal(this.cart);
-});
-
 module.exports = mongoose.model("CartItem", CartItemSchema);
