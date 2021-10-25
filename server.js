@@ -79,6 +79,7 @@ const order = require("./routes/Order");
 const category = require("./routes/Category");
 const auth = require("./routes/Auth");
 const cart = require("./routes/Cart");
+const review = require("./routes/Review");
 
 // Mounting Routes
 app.use(`${api}/products`, product);
@@ -87,6 +88,7 @@ app.use(`${api}/orders`, order);
 app.use(`${api}/categories`, category);
 app.use(`${api}/auth`, auth);
 app.use(`${api}/cart`, cart);
+app.use(`${api}/reviews`, review);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`.yellow.bold);

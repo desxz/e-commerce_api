@@ -15,6 +15,9 @@ const {
 
 const { protect, authorize } = require("../middleware/auth");
 
+const reviewRouter = require("./review");
+router.use("/:productId/reviews", reviewRouter);
+
 router
     .route("/")
     .get(
