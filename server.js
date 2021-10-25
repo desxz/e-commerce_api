@@ -5,8 +5,12 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 
-//// Application Configurations
+//--------------Environment Configurations-------------\\
 const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db");
 const app = express();
@@ -31,7 +35,7 @@ app.use(
     })
 );
 
-////Middlewares
+//--------------MiddleWares-------------\\
 
 // Morgan Logger
 if (process.env.NODE_ENV === "development") {
@@ -41,7 +45,32 @@ if (process.env.NODE_ENV === "development") {
 // Body Parser
 app.use(bodyParser.json());
 
-////Routes
+// Error Handler
+app.use(errorHandler);
+
+//--------------Security-------------\\
+
+//Rate Limiter
+const limiter = rateLimit({
+    windowMs: 30 * 60 * 1000, // 30 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+});
+
+app.use(limiter);
+
+//Mongo sanitize
+app.use(mongoSanitize());
+
+// Helmet
+app.use(helmet());
+
+// XSS
+app.use(xss());
+
+// CORS
+app.use(cors());
+
+//--------------Routes-------------\\
 
 //Define Routes
 const product = require("./routes/Product");
@@ -58,12 +87,6 @@ app.use(`${api}/orders`, order);
 app.use(`${api}/categories`, category);
 app.use(`${api}/auth`, auth);
 app.use(`${api}/cart`, cart);
-
-// Error Handler
-app.use(errorHandler);
-
-//Mongo sanitize
-app.use(mongoSanitize());
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`.yellow.bold);
