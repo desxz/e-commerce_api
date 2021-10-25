@@ -45,9 +45,6 @@ if (process.env.NODE_ENV === "development") {
 // Body Parser
 app.use(bodyParser.json());
 
-// Error Handler
-app.use(errorHandler);
-
 //--------------Security-------------\\
 
 //Rate Limiter
@@ -89,6 +86,9 @@ app.use(`${api}/categories`, category);
 app.use(`${api}/auth`, auth);
 app.use(`${api}/cart`, cart);
 app.use(`${api}/reviews`, review);
+
+// Error Handler
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`.yellow.bold);

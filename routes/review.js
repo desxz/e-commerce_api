@@ -9,6 +9,7 @@ const {
 const Review = require("../models/Review");
 const router = express.Router({ mergeParams: true });
 const Product = require("../models/Product");
+const ErrorResponse = require("../utils/errorResponse");
 
 const advancedResults = require("../middleware/advancedResults");
 const { protect, authorize } = require("../middleware/auth");
@@ -22,12 +23,12 @@ router
         }),
         getReviews
     )
-    .post(protect, authorize("user", "admin"), createReview);
+    .post(protect, authorize("customer", "admin"), createReview);
 
 router
     .route("/:id")
     .get(getReview)
-    .put(protect, authorize("user", "admin"), updateReview)
-    .delete(protect, authorize("user", "admin"), deleteReview);
+    .put(protect, authorize("customer", "admin"), updateReview)
+    .delete(protect, authorize("customer", "admin"), deleteReview);
 
 module.exports = router;
