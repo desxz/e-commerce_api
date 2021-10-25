@@ -5,16 +5,16 @@ const CartItemSchema = new mongoose.Schema({
     cart: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Cart",
-        required: true,
+        required: [true, "Cart is required"],
     },
     product: {
         type: mongoose.Schema.ObjectId,
         ref: "Product",
-        required: true,
+        required: [true, "Product is required"],
     },
     quantity: {
         type: Number,
-        required: true,
+        required: [true, "Quantity is required"],
     },
     date: {
         type: Date,

@@ -6,7 +6,7 @@ const CartSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
-        required: true,
+        required: [true, "User is required"],
     },
     items: [
         {
@@ -18,6 +18,16 @@ const CartSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    lastUpdated: {
+        type: Date,
+        default: Date.now,
+    },
+});
+
+// lastUpdated is updated every time an item is added or removed
+CartSchema.pre("save", function (next) {
+    this.lastUpdated = Date.now();
+    next();
 });
 
 //Calculate subtotal of cart before save

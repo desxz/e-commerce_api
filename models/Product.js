@@ -5,9 +5,14 @@ const ProductSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    seller: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
     description: {
         type: String,
-        required: true,
+        required: [true, "Description is required"],
     },
     richDescription: {
         type: String,
@@ -23,7 +28,7 @@ const ProductSchema = new mongoose.Schema({
     },
     brand: {
         type: String,
-        required: true,
+        required: [true, "Brand is required"],
     },
     price: {
         type: Number,
@@ -32,10 +37,11 @@ const ProductSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.ObjectId,
         ref: "Category",
+        required: [true, "Category is required"],
     },
     countInStock: {
         type: Number,
-        required: true,
+        required: [true, "Count in stock is required"],
         min: 0,
         max: 999,
     },
