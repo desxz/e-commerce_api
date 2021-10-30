@@ -2,6 +2,7 @@ const express = require("express");
 const colors = require("colors");
 const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
+const path = require("path");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -21,6 +22,9 @@ const PORT = process.env.PORT || 5000;
 
 // Load env variables
 dotenv.config({ path: "./config/config.env" });
+
+// Set static folder
+app.use(express.static(path.join(__dirname, "public")));
 
 // API Route shortway
 const api = process.env.API_URL;
