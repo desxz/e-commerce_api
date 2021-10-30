@@ -1,5 +1,6 @@
 const express = require("express");
 const colors = require("colors");
+const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
@@ -41,6 +42,8 @@ app.use(
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
+
+app.use(fileUpload());
 
 // Body Parser
 app.use(bodyParser.json());

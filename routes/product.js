@@ -11,6 +11,8 @@ const {
     createProduct,
     updateProduct,
     deleteProduct,
+    uploadProductImage,
+    updateProductCoverImage,
 } = require("../controllers/product");
 
 const { protect, authorize } = require("../middleware/auth");
@@ -35,4 +37,11 @@ router
     .put(protect, authorize("seller", "admin"), updateProduct)
     .delete(protect, authorize("seller", "admin"), deleteProduct);
 
+router
+    .route("/:id/images")
+    .put(protect, authorize("seller", "admin"), uploadProductImage);
+
+router
+    .route("/:id/images/cover")
+    .put(protect, authorize("seller", "admin"), updateProductCoverImage);
 module.exports = router;

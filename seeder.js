@@ -48,6 +48,7 @@ const deleteData = async () => {
         await Cart.deleteMany();
         await User.deleteMany();
         await CartItem.deleteMany();
+        await Order.deleteMany();
         //await Order.deleteMany();
         console.log("Data Destroyed...".red.inverse.white.bold);
         process.exit();

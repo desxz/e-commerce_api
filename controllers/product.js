@@ -2,6 +2,7 @@ const Product = require("../models/Product");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
 const Category = require("../models/Category");
+const path = require("path");
 
 //@desc   Get all products
 //@route  GET /api/v1/products
@@ -62,6 +63,7 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 //@access Public
 exports.createProduct = asyncHandler(async (req, res, next) => {
     req.body.category = req.params.categoryId;
+    req.body.seller = req.user.id;
 
     const category = await Category.findById(req.params.categoryId);
 
@@ -128,5 +130,113 @@ exports.deleteProduct = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         data: {},
+    });
+});
+
+//@desc   Upload photo for product
+//@route  PUT /api/v1/products/:id/images
+//@access Private
+exports.uploadProductImage = asyncHandler(async (req, res, next) => {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+        return next(
+            new ErrorResponse(
+                `Product not found with id of ${req.params.id}`,
+                404
+            )
+        );
+    }
+
+    if (
+        product.seller.toString() !== req.user.id ||
+        req.user.role !== "admin"
+    ) {
+        return next(
+            new ErrorResponse(
+                `You are not authorized to update this product`,
+                401
+            )
+        );
+    }
+
+    if (!req.files) {
+        return next(new ErrorResponse(`Please upload a file`, 400));
+    }
+
+    const file = req.files.file;
+
+    if (!file.mimetype.startsWith("image")) {
+        return next(new ErrorResponse(`Please upload an image file`, 400));
+    }
+
+    if (file.size > process.env.MAX_FILE_UPLOAD) {
+        return next(
+            new ErrorResponse(
+                `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+                400
+            )
+        );
+    }
+
+    file.name = `photo_${product._id}_${product.images.length}${
+        path.parse(file.name).ext
+    }`;
+
+    file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+        if (err) {
+            console.error(err);
+            return next(new ErrorResponse(`Problem with file upload`, 500));
+        }
+
+        product.images.push(file.name);
+
+        await product.save();
+
+        if (product.images.length === 1) {
+            product.coverImage = file.name;
+        }
+
+        await product.save();
+
+        res.status(200).json({
+            success: true,
+            data: file.name,
+        });
+    });
+});
+
+//@desc   Change product coverImage
+//@route  PUT /api/v1/products/:id/images/cover
+//@access Private
+exports.updateProductCoverImage = asyncHandler(async (req, res, next) => {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+        return next(
+            new ErrorResponse(
+                `Product not found with id of ${req.params.id}`,
+                404
+            )
+        );
+    }
+
+    if (
+        product.seller.toString() !== req.user.id ||
+        req.user.role !== "admin"
+    ) {
+        return next(
+            new ErrorResponse(
+                `You are not authorized to update this product`,
+                401
+            )
+        );
+    }
+
+    product.coverImage = req.body.coverImage;
+
+    await product.save();
+
+    res.status(200).json({
+        success: true,
+        data: product.coverImage,
     });
 });

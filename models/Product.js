@@ -19,14 +19,16 @@ const ProductSchema = new mongoose.Schema(
             type: String,
             default: "",
         },
-        image: {
+        coverImage: {
             type: String,
             default: "",
         },
-        images: {
-            type: Array,
-            default: [],
-        },
+        images: [
+            {
+                type: String,
+                default: "",
+            },
+        ],
         brand: {
             type: String,
             required: [true, "Brand is required"],
