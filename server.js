@@ -78,7 +78,7 @@ app.use(cors());
 
 //Define Routes
 const product = require("./routes/product");
-const user = require("./routes/pser");
+const user = require("./routes/user");
 const order = require("./routes/order");
 const category = require("./routes/category");
 const auth = require("./routes/auth");
