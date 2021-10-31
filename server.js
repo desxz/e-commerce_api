@@ -77,13 +77,13 @@ app.use(cors());
 //--------------Routes-------------\\
 
 //Define Routes
-const product = require("./routes/Product");
-const user = require("./routes/User");
-const order = require("./routes/Order");
-const category = require("./routes/Category");
-const auth = require("./routes/Auth");
-const cart = require("./routes/Cart");
-const review = require("./routes/Review");
+const product = require("./routes/product");
+const user = require("./routes/pser");
+const order = require("./routes/order");
+const category = require("./routes/category");
+const auth = require("./routes/auth");
+const cart = require("./routes/cart");
+const review = require("./routes/review");
 
 // Mounting Routes
 app.use(`${api}/products`, product);
